@@ -1,8 +1,0 @@
-Per installazione
-1) registrare la dll nella gac : gacutil /i ArcGisServerCustomProvider.dll
-2) creare un database in sql server o sql server express
-3) modificare il nome del database all'inizio del file ArcGisServerCustomProvider.sql ed eseguire la query nel database creato
-4) nel file PerRegistrareInAGSAdministrator.txt modificare la stringa di connessione (connectionStringName) aggiungento il nome del database (Initial Catalog), dell'utente che ha privilegi di lettura e scrittura nel database e la password dell'utente.
-5) aprire l'admin di arcgis server (http://localhost:6080/arcgis/admin) e in security > config > updateIdentityStore copiare i due json rispettivamente in User store e Role store
-
-
