@@ -493,7 +493,8 @@ namespace ArcGisServerCustomProvider
                 using (SqlConnection connection = new SqlConnection(this.connectionString))
                 {
                     connection.Open();
-                    foreach (string u in userNames)
+                    
+                    foreach (string u in userNames.Distinct())
                     {
                         using (SqlCommand cmd = new SqlCommand("SELECT Id FROM Users WHERE Username = @Username", connection))
                         {
@@ -509,7 +510,7 @@ namespace ArcGisServerCustomProvider
                 throw new ProviderException(e.Message);
             }
 
-            return idUsername.Distinct().ToArray();
+            return idUsername.ToArray();
         }
 
         /// <summary>
@@ -525,7 +526,7 @@ namespace ArcGisServerCustomProvider
                 using (SqlConnection connection = new SqlConnection(this.connectionString))
                 {
                     connection.Open();
-                    foreach (string r in roleNames)
+                    foreach (string r in roleNames.Distinct())
                     {
                         using (SqlCommand cmd = new SqlCommand("SELECT Id FROM Roles WHERE Rolename = @RoleName", connection))
                         {
@@ -541,7 +542,7 @@ namespace ArcGisServerCustomProvider
                 throw new ProviderException(e.Message);
             }
 
-            return idRoles.Distinct().ToArray();
+            return idRoles.ToArray();
         }
 
     }
