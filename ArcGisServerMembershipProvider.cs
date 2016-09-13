@@ -215,9 +215,9 @@ namespace ArcGisServerCustomProvider
                 {
                     using (SqlConnection connection = new SqlConnection(this.connectionString))
                     {
-                        using (SqlCommand cmd = new SqlCommand("INSERT INTO Users (Username, Password) VALUES (@UserName, @Password)", connection))
+                        using (SqlCommand cmd = new SqlCommand("INSERT INTO Users (Username, Password) VALUES (@Username, @Password)", connection))
                         {
-                            cmd.Parameters.Add("@UserName", SqlDbType.NVarChar).Value = username;
+                            cmd.Parameters.Add("@Username", SqlDbType.NVarChar).Value = username;
                             cmd.Parameters.Add("@Password", SqlDbType.NVarChar).Value = password;
                             connection.Open();
 

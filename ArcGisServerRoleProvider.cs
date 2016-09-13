@@ -112,10 +112,10 @@ namespace ArcGisServerCustomProvider
                             foreach (int r in idRoles)
                             {
 
-                                cmd.CommandText = "SELECT Count(*) FROM UsersRoles WHERE IdRolename=@idRole AND IdUsername=@idUser";
+                                cmd.CommandText = "SELECT Count(*) FROM UsersRoles WHERE IdRole=@IdRole AND IdUser=@IdUser";
                                 cmd.Parameters.Clear();
-                                cmd.Parameters.Add("@idRole", SqlDbType.Int).Value = r;
-                                cmd.Parameters.Add("@idUser", SqlDbType.Int).Value = u;
+                                cmd.Parameters.Add("@IdRole", SqlDbType.Int).Value = r;
+                                cmd.Parameters.Add("@IdUser", SqlDbType.Int).Value = u;
 
                                 int count = (int)cmd.ExecuteScalar();
                                 if (count > 0)
@@ -125,7 +125,7 @@ namespace ArcGisServerCustomProvider
 
 
                                 cmd.CommandText = "INSERT INTO UsersRoles" +
-                                        " (IdRolename,IdUsername)" +
+                                        " (IdRole, IdUser)" +
                                         " VALUES (@IdRole, @IdUser)";
 
                                 cmd.Parameters.Clear();
@@ -176,9 +176,9 @@ namespace ArcGisServerCustomProvider
 
                 using (SqlConnection connection = new SqlConnection(this.connectionString))
                 {
-                    using (SqlCommand cmd = new SqlCommand("INSERT INTO Roles (Rolename) VALUES (@Role)", connection))
+                    using (SqlCommand cmd = new SqlCommand("INSERT INTO Roles (Rolename) VALUES (@Rolename)", connection))
                     {
-                        cmd.Parameters.Add("@Role", SqlDbType.NVarChar).Value = roleName;
+                        cmd.Parameters.Add("@Rolename", SqlDbType.NVarChar).Value = roleName;
                         
                         connection.Open();
 
@@ -207,9 +207,9 @@ namespace ArcGisServerCustomProvider
                 using (SqlConnection connection = new SqlConnection(this.connectionString))
                 {
                     connection.Open();
-                    using (SqlCommand cmd = new SqlCommand("SELECT Users.Id FROM Roles INNER JOIN UsersRoles ON Roles.Id = UsersRoles.IdRolename INNER JOIN Users ON UsersRoles.IdUsername = Users.Id WHERE Roles.Rolename = @Role", connection))
+                    using (SqlCommand cmd = new SqlCommand("SELECT Users.Id FROM Roles INNER JOIN UsersRoles ON Roles.Id = UsersRoles.IdRole INNER JOIN Users ON UsersRoles.IdUser = Users.Id WHERE Roles.Rolename = @Rolename", connection))
                     {
-                        cmd.Parameters.Add("@Role", SqlDbType.NVarChar).Value = roleName;
+                        cmd.Parameters.Add("@Rolename", SqlDbType.NVarChar).Value = roleName;
                         object id = cmd.ExecuteScalar();
 
                         if (id != null)
@@ -218,9 +218,9 @@ namespace ArcGisServerCustomProvider
                         }
                     }
 
-                    using (SqlCommand cmd = new SqlCommand("DELETE FROM Roles WHERE Rolename= @Role", connection))
+                    using (SqlCommand cmd = new SqlCommand("DELETE FROM Roles WHERE Rolename= @Rolename", connection))
                     {
-                        cmd.Parameters.Add("@Role", SqlDbType.NVarChar).Value = roleName;
+                        cmd.Parameters.Add("@Rolename", SqlDbType.NVarChar).Value = roleName;
 
                         rowsAffected = cmd.ExecuteNonQuery();
                     }
@@ -292,9 +292,9 @@ namespace ArcGisServerCustomProvider
             {
                 using (SqlConnection connection = new SqlConnection(this.connectionString))
                 {
-                    using (SqlCommand cmd = new SqlCommand("SELECT Roles.Rolename FROM Roles INNER JOIN UsersRoles ON Roles.Id = UsersRoles.IdRolename INNER JOIN Users ON UsersRoles.IdUsername = Users.Id WHERE Users.Username = @UserName ORDER BY Roles.Rolename", connection))
+                    using (SqlCommand cmd = new SqlCommand("SELECT Roles.Rolename FROM Roles INNER JOIN UsersRoles ON Roles.Id = UsersRoles.IdRole INNER JOIN Users ON UsersRoles.IdUser = Users.Id WHERE Users.Username = @Username ORDER BY Roles.Rolename", connection))
                     {
-                        cmd.Parameters.Add("@UserName", SqlDbType.NVarChar).Value = username;
+                        cmd.Parameters.Add("@Username", SqlDbType.NVarChar).Value = username;
                         connection.Open();
                         using (SqlDataReader reader = cmd.ExecuteReader())
                         {
@@ -330,9 +330,9 @@ namespace ArcGisServerCustomProvider
                 using (SqlConnection connection = new SqlConnection(this.connectionString))
                 {
                     connection.Open();
-                    using (SqlCommand cmd = new SqlCommand("SELECT Users.Username FROM Roles INNER JOIN UsersRoles ON Roles.Id = UsersRoles.IdRolename INNER JOIN Users ON UsersRoles.IdUsername = Users.Id WHERE (Roles.Rolename = @RoleName) ORDER BY Users.Username", connection))
+                    using (SqlCommand cmd = new SqlCommand("SELECT Users.Username FROM Roles INNER JOIN UsersRoles ON Roles.Id = UsersRoles.IdRole INNER JOIN Users ON UsersRoles.IdUser = Users.Id WHERE (Roles.Rolename = @Rolename) ORDER BY Users.Username", connection))
                     {
-                        cmd.Parameters.Add("@RoleName", SqlDbType.NVarChar).Value = roleName;
+                        cmd.Parameters.Add("@Rolename", SqlDbType.NVarChar).Value = roleName;
                         using (SqlDataReader reader = cmd.ExecuteReader())
                         {
                             if (reader.HasRows)
@@ -358,9 +358,9 @@ namespace ArcGisServerCustomProvider
         /// user in role
         /// </summary>
         /// <param name="username">name of user</param>
-        /// <param name="roleName">name of role</param>
+        /// <param name="rolename">name of role</param>
         /// <returns>true if user in in role</returns>
-        public override bool IsUserInRole(string username, string roleName)
+        public override bool IsUserInRole(string username, string rolename)
         {
             bool exists = false;
             try
@@ -368,9 +368,9 @@ namespace ArcGisServerCustomProvider
                 using (SqlConnection connection = new SqlConnection(this.connectionString))
                 {
                     connection.Open();
-                    using (SqlCommand cmd = new SqlCommand("SELECT Count(*) FROM UsersRoles INNER JOIN Users ON UsersRoles.IdUsername = Users.Id INNER JOIN Roles ON UsersRoles.IdRolename = Roles.Id WHERE (Users.Username = @Username) AND (Roles.Rolename = @RoleName)", connection))
+                    using (SqlCommand cmd = new SqlCommand("SELECT Count(*) FROM UsersRoles INNER JOIN Users ON UsersRoles.IdUser = Users.Id INNER JOIN Roles ON UsersRoles.IdRole = Roles.Id WHERE (Users.Username = @Username) AND (Roles.Rolename = @Rolename)", connection))
                     {
-                        cmd.Parameters.Add("@RoleName", SqlDbType.NVarChar).Value = roleName;
+                        cmd.Parameters.Add("@Rolename", SqlDbType.NVarChar).Value = rolename;
                         cmd.Parameters.Add("@Username", SqlDbType.NVarChar).Value = username;
 
                         int count = (int)cmd.ExecuteScalar();
@@ -390,13 +390,13 @@ namespace ArcGisServerCustomProvider
         /// Remove Users From Roles
         /// </summary>
         /// <param name="usernames">list of users</param>
-        /// <param name="roleNames">list of roles</param>
-        public override void RemoveUsersFromRoles(string[] usernames, string[] roleNames)
+        /// <param name="rolenames">list of roles</param>
+        public override void RemoveUsersFromRoles(string[] usernames, string[] rolenames)
         {
             try
             {
                 int[] idUsers = this.Users(usernames);
-                int[] idRoles = this.Roles(roleNames);
+                int[] idRoles = this.Roles(rolenames);
 
                 using (SqlConnection connection = new SqlConnection(this.connectionString))
                 {
@@ -414,12 +414,11 @@ namespace ArcGisServerCustomProvider
                         {
                             foreach (int r in idRoles)
                             {
-                                cmd.CommandText = "DELETE FROM UsersRoles" +
-                                        " WHERE IdRolename = @IdRole AND IdUsername = @IdUser";
+                                cmd.CommandText = "DELETE FROM UsersRoles WHERE IdRole = @IdRole AND IdUser = @IdUser";
 
                                 cmd.Parameters.Clear();
-                                cmd.Parameters.Add("@IdRole", System.Data.SqlDbType.Int).Value = r;
-                                cmd.Parameters.Add("@IdUser", System.Data.SqlDbType.Int).Value = u;
+                                cmd.Parameters.Add("@IdRole", SqlDbType.Int).Value = r;
+                                cmd.Parameters.Add("@IdUser", SqlDbType.Int).Value = u;
                                 cmd.ExecuteNonQuery();
                             }
                         }
@@ -463,9 +462,9 @@ namespace ArcGisServerCustomProvider
                 using (SqlConnection connection = new SqlConnection(this.connectionString))
                 {
                     connection.Open();
-                    using (SqlCommand cmd = new SqlCommand("SELECT Count(*) FROM Roles WHERE Rolename = @RoleName", connection))
+                    using (SqlCommand cmd = new SqlCommand("SELECT Count(*) FROM Roles WHERE Rolename = @Rolename", connection))
                     {
-                        cmd.Parameters.Add("@RoleName", System.Data.SqlDbType.NVarChar).Value = roleName;
+                        cmd.Parameters.Add("@Rolename", SqlDbType.NVarChar).Value = roleName;
 
                         int count = (int)cmd.ExecuteScalar();
                         exists = count > 0;
@@ -487,7 +486,7 @@ namespace ArcGisServerCustomProvider
         /// <returns>list of id users</returns>
         private int[] Users(string[] userNames)
         {
-            List<int> idUsername = new List<int>();
+            List<int> idUser = new List<int>();
             try
             {
                 using (SqlConnection connection = new SqlConnection(this.connectionString))
@@ -500,7 +499,7 @@ namespace ArcGisServerCustomProvider
                         {
                             cmd.Parameters.Add("@Username", SqlDbType.NVarChar).Value = u;
 
-                            idUsername.Add((int)cmd.ExecuteScalar());
+                            idUser.Add((int)cmd.ExecuteScalar());
                         }
                     }
                 }
@@ -510,7 +509,7 @@ namespace ArcGisServerCustomProvider
                 throw new ProviderException(e.Message);
             }
 
-            return idUsername.ToArray();
+            return idUser.ToArray();
         }
 
         /// <summary>
@@ -528,9 +527,9 @@ namespace ArcGisServerCustomProvider
                     connection.Open();
                     foreach (string r in roleNames.Distinct())
                     {
-                        using (SqlCommand cmd = new SqlCommand("SELECT Id FROM Roles WHERE Rolename = @RoleName", connection))
+                        using (SqlCommand cmd = new SqlCommand("SELECT Id FROM Roles WHERE Rolename = @Rolename", connection))
                         {
-                            cmd.Parameters.Add("@RoleName", SqlDbType.NVarChar).Value = r;
+                            cmd.Parameters.Add("@Rolename", SqlDbType.NVarChar).Value = r;
 
                             idRoles.Add((int)cmd.ExecuteScalar());
                         }
