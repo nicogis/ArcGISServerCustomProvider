@@ -553,14 +553,14 @@ namespace ArcGisServerCustomProvider
             {
                 using (SqlConnection connection = new SqlConnection(this.connectionString))
                 {
-                    using (SqlCommand cmd = new SqlCommand("SELECT Id FROM Users WHERE Username = @Username AND Password = @Password", connection))
+                    using (SqlCommand cmd = new SqlCommand("SELECT Count(*) FROM Users WHERE Username = @Username AND Password = @Password", connection))
                     {
                         cmd.Parameters.Add("@Username", SqlDbType.NVarChar).Value = username;
                         cmd.Parameters.Add("@Password", SqlDbType.NVarChar).Value = password;
                         connection.Open();
 
-                        object id = cmd.ExecuteScalar();
-                        return (id != null);
+                        return ((int)cmd.ExecuteScalar()) > 0;
+                        
                     }
                 }
             }

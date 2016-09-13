@@ -368,7 +368,7 @@ namespace ArcGisServerCustomProvider
                 using (SqlConnection connection = new SqlConnection(this.connectionString))
                 {
                     connection.Open();
-                    using (SqlCommand cmd = new SqlCommand("SELECT Users.Id FROM UsersRoles INNER JOIN Users ON UsersRoles.IdUsername = Users.Id INNER JOIN Roles ON UsersRoles.IdRolename = Roles.Id WHERE (Users.Username = @Username) AND (Roles.Rolename = @RoleName)", connection))
+                    using (SqlCommand cmd = new SqlCommand("SELECT Count(*) FROM UsersRoles INNER JOIN Users ON UsersRoles.IdUsername = Users.Id INNER JOIN Roles ON UsersRoles.IdRolename = Roles.Id WHERE (Users.Username = @Username) AND (Roles.Rolename = @RoleName)", connection))
                     {
                         cmd.Parameters.Add("@RoleName", SqlDbType.NVarChar).Value = roleName;
                         cmd.Parameters.Add("@Username", SqlDbType.NVarChar).Value = username;
