@@ -207,12 +207,12 @@ namespace ArcGisServerCustomProvider
                 using (SqlConnection connection = new SqlConnection(this.connectionString))
                 {
                     connection.Open();
-                    using (SqlCommand cmd = new SqlCommand("SELECT Users.Id FROM Roles INNER JOIN UsersRoles ON Roles.Id = UsersRoles.IdRole INNER JOIN Users ON UsersRoles.IdUser = Users.Id WHERE Roles.Rolename = @Rolename", connection))
+                    using (SqlCommand cmd = new SqlCommand("SELECT Count(*) FROM Roles INNER JOIN UsersRoles ON Roles.Id = UsersRoles.IdRole INNER JOIN Users ON UsersRoles.IdUser = Users.Id WHERE Roles.Rolename = @Rolename", connection))
                     {
                         cmd.Parameters.Add("@Rolename", SqlDbType.NVarChar).Value = roleName;
-                        object id = cmd.ExecuteScalar();
+                        int c = (int)cmd.ExecuteScalar();
 
-                        if (id != null)
+                        if (c != 0)
                         {
                             throw new ProviderException("Cannot delete a populated role.");
                         }
